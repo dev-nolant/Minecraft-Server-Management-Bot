@@ -48,7 +48,7 @@ def save_sessions():
 async def start_minecraft_server(screen_session_name, server_dir):
     try:
         start_command = f"screen -dmS {screen_session_name} sh -c 'java -Xmx1G -Xms1G -jar minecraft_server.jar nogui | tee server.log'"
-        subprocess.run(start_command, shell=True, cwd=server_dir, check=True)
+        subprocess.run(start_command, shell=False, cwd=server_dir, check=True)
         log_file_path = os.path.join(server_dir, "server.log")
         server_ready = await wait_for_server_ready(log_file_path)
         return server_ready
