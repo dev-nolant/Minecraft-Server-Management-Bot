@@ -2,11 +2,11 @@ import discord
 from discord.ext import commands
 import requests
 import os
-import random
 import subprocess
 import asyncio
 import json
 import time
+import secrets
 
 DISCORD_TOKEN = 'TOKEN'
 MINECRAFT_SERVER_URL = "https://piston-data.mojang.com/v1/objects/45810d238246d90e811d896f87b14695b7fb6839/server.jar"
@@ -22,7 +22,7 @@ bot.thread_sessions = {}
 
 # Function to generate a random high port number
 def generate_random_port():
-    return random.randint(30000, 65535)
+    return secrets.SystemRandom().randint(30000, 65535)
 
 # Get the public IP of the Droplet
 def get_public_ip():
