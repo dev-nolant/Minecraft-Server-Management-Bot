@@ -27,7 +27,7 @@ def generate_random_port():
 # Get the public IP of the Droplet
 def get_public_ip():
     try:
-        response = requests.get("https://api.ipify.org")
+        response = requests.get("https://api.ipify.org", timeout=60)
         response.raise_for_status()
         return response.text
     except requests.RequestException:
