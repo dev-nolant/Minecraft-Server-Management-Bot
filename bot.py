@@ -7,6 +7,7 @@ import subprocess
 import asyncio
 import json
 import time
+from security import safe_command
 
 DISCORD_TOKEN = 'TOKEN'
 MINECRAFT_SERVER_URL = "https://piston-data.mojang.com/v1/objects/45810d238246d90e811d896f87b14695b7fb6839/server.jar"
@@ -48,7 +49,7 @@ def save_sessions():
 async def start_minecraft_server(screen_session_name, server_dir):
     try:
         start_command = f"screen -dmS {screen_session_name} sh -c 'java -Xmx1G -Xms1G -jar minecraft_server.jar nogui | tee server.log'"
-        subprocess.run(start_command, shell=False, cwd=server_dir, check=True)
+        safe_command.run(subprocess.run, start_command, shell=False, cwd=server_dir, check=True)
         log_file_path = os.path.join(server_dir, "server.log")
         server_ready = await wait_for_server_ready(log_file_path)
         return server_ready
@@ -75,7 +76,7 @@ async def wait_for_server_ready(log_file_path):
 
 # Stop the Minecraft server without removing the session data
 async def stop_server(screen_session_name, thread):
-    subprocess.run(f"screen -S {screen_session_name} -X stuff 'stop\n'", shell=True)
+    safe_command.run(subprocess.run, f"screen -S {screen_session_name} -X stuff 'stop\n'", shell=True)
     await thread.send("The server has been stopped.")
 
 @bot.event
@@ -228,7 +229,7 @@ async def op(interaction: discord.Interaction, username: str):
         await interaction.response.send_message("You do not have permission to use this command.", ephemeral=True)
         return
     
-    subprocess.run(f"screen -S {session_info['screen_session']} -X stuff 'op {username}\n'", shell=True)
+    safe_command.run(subprocess.run, f"screen -S {session_info['screen_session']} -X stuff 'op {username}\n'", shell=True)
     thread = await get_or_create_thread(interaction, session_info)
     await thread.send(f"Gave operator privileges to `{username}`.")
 
